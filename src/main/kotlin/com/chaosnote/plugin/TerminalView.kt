@@ -63,7 +63,7 @@ fun TerminalView(
 
         onDispose {
             isInitialized = false
-            terminalWidget.stop() // Використовуйте stop() замість close(), якщо це JediTerm
+            terminalWidget.close() // Використовуйте stop() замість close(), якщо це JediTerm
             process?.destroy()
         }
     }
