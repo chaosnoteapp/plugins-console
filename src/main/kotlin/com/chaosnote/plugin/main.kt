@@ -13,7 +13,7 @@ val payload = """
     {
         "shell": "powershell",
         "vars": "test=HelloWorld",
-        "code": "echo 'Ola la'"
+        "code": "echo ${"$"}{test}"
     }
 """.trimIndent()
 
@@ -34,6 +34,6 @@ fun main() = application {
 class FakeBlockHandle(override val payload: String) : BlockHandle {
     override val id: String = "plugin_management"
     override fun update(value: String) {
-
+        println("Updated payload: $value")
     }
 }

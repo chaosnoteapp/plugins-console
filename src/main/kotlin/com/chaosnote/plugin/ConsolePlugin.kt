@@ -23,7 +23,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.chaosnote.api.block.BlockHandle
 import com.chaosnote.api.block.BlockPlugin
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -56,14 +60,11 @@ class ConsolePlugin : BlockPlugin {
         // ===============================
         // Output log
         // ===============================
-        var output by remember { mutableStateOf("") }
-        val logScroll = rememberScrollState()
 
         // ===============================
         // Code editor state
         // ===============================
         var codeValue by remember { mutableStateOf(TextFieldValue(payload.code)) }
-        var terminalValue by remember { mutableStateOf(TextFieldValue("")) }
 
         // поточний selection (може бути пустий)
         var currentSelection by remember { mutableStateOf(codeValue.selection) }
@@ -72,12 +73,10 @@ class ConsolePlugin : BlockPlugin {
         var prevSelection by remember { mutableStateOf(codeValue.selection) }
 
         val codeScroll = rememberScrollState()
-
         var selectedTab by remember { mutableStateOf(0) }
         val tabs = listOf("Shell", "Variables", "Code")
 
         val terminalController = remember { TerminalController() }
-        var commandText by remember { mutableStateOf("ls -la") }
 
         Column(
             modifier = Modifier
@@ -112,24 +111,31 @@ class ConsolePlugin : BlockPlugin {
                 when (selectedTab) {
                     0 -> ScrollableTextField(
                         value = payload.shell,
-                        onValueChange = { payload = payload.copy(shell = it) },
+                        onValueChange = {
+                            payload = payload.copy(shell = it)
+                            blockHandle.update(Json.encodeToString(payload))
+                        },
                         height = 56.dp
                     )
+
                     1 -> ScrollableTextField(
                         value = payload.vars,
-                        onValueChange = { payload = payload.copy(vars = it) },
+                        onValueChange = {
+                            payload = payload.copy(vars = it)
+                            blockHandle.update(Json.encodeToString(payload))
+
+                        },
                         height = 120.dp
                     )
 
-                    2 ->       Column(
+                    2 -> Column(
                         Modifier
                             .fillMaxWidth()
                             .background(Color(0xFF2A2A2A))
                             .padding(8.dp)
                     ) {
                         TextField(
-                            value = payload.code,
-                            onValueChange = { payload = payload.copy(code = it) },
+                            value = codeValue,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(200.dp)          // 🔒 НЕ росте
@@ -138,13 +144,49 @@ class ConsolePlugin : BlockPlugin {
                                 color = Color.White,
                                 fontFamily = FontFamily.Monospace
                             ),
-                            colors = darkTextFieldColors()
+                            colors = darkTextFieldColors(),
+                            onValueChange = { newValue ->
+
+                                // Selection змінився?
+                                if (newValue.selection != currentSelection) {
+                                    currentSelection = newValue.selection
+
+                                    // Якщо виділення НЕ пусте — оновлюємо prevSelection
+                                    if (!newValue.selection.collapsed) {
+                                        prevSelection = newValue.selection
+                                    }
+                                }
+
+                                // Текст змінився
+                                if (newValue.text != codeValue.text) {
+                                    payload = payload.copy(code = newValue.text)
+                                    blockHandle.update(Json.encodeToString(payload))
+                                }
+
+                                codeValue = newValue
+                            },
                         )
 
                         Button(
-                            onClick = {},
+                            onClick = {
+                                val sel = prevSelection
+
+                                val codeSelection = if (!sel.collapsed) {
+                                    codeValue.text.substring(minOf(sel.start, sel.end), maxOf(sel.start, sel.end))
+                                } else codeValue.text
+
+                                if (payload.shell.isNotBlank() && codeSelection.isNotBlank()) {
+                                    CoroutineScope(Dispatchers.Default).launch {
+                                        terminalController.sendCommand(codeSelection, payload.vars)
+                                    }
+                                }
+
+                                // ❗️Після виконання — повертаємо виділення назад
+                                codeValue = codeValue.copy(selection = prevSelection)
+                                currentSelection = prevSelection
+                            },
                             modifier = Modifier.fillMaxWidth()
-                        ){
+                        ) {
                             Text("Run Selected")
                         }
                     }
@@ -155,23 +197,10 @@ class ConsolePlugin : BlockPlugin {
             Spacer(Modifier.height(12.dp))
 
             TerminalView(
-                terminalType = "powershell", // або "powershell.exe"
+                terminalType = payload.shell, // або "powershell.exe"
                 controller = terminalController,
                 modifier = Modifier.fillMaxSize()
             )
-
-            // ===============================
-            // BOTTOM: Terminal (fills rest)
-            // ===============================
-
-//            SwingPanel(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .weight(1f),   // 🔥 ось тут ключ
-//                factory = {
-//                    createTerminalComponent(payload.shell)
-//                }
-//            )
         }
 
     }

@@ -11,11 +11,19 @@ class TerminalController {
     }
 
     // Метод для відправки команди
-    fun sendCommand(command: String) {
-        val connector = terminalWidget?.ttyConnector
-        if (connector != null) {
-            // Додаємо \n, щоб команда спрацювала (як натискання Enter)
-            connector.write("$command\n")
+    fun sendCommand(command: String, vars: String) {
+        val variables = vars.lines()
+            .mapNotNull { line ->
+                val parts = line.split("=", limit = 2)
+                if (parts.size == 2) parts[0].trim() to parts[1].trim() else null
+            }
+            .toMap()
+        var endCommand = command
+        variables.forEach { (k, v) ->
+            endCommand = endCommand.replace("\${$k}", v)
         }
+
+
+        terminalWidget?.ttyConnector?.write("$endCommand\r")
     }
 }
