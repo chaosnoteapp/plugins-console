@@ -35,7 +35,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 class ConsolePlugin : BlockPlugin {
 
     override val type: String = this.javaClass.name
-    override val shortName = "Plugin Management"
+    override val shortName = "Console"
 
     @Serializable
     data class CodePayload(

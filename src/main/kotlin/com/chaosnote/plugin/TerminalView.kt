@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.SwingPanel
 import com.jediterm.pty.PtyProcessTtyConnector
 import com.jediterm.terminal.TerminalColor
+import com.jediterm.terminal.TextStyle
 import com.jediterm.terminal.ui.JediTermWidget
 import com.jediterm.terminal.ui.settings.DefaultSettingsProvider
 import com.pty4j.PtyProcessBuilder
@@ -18,11 +19,19 @@ import java.nio.charset.Charset
 
 val settings = object : DefaultSettingsProvider() {
 
-    override fun getDefaultBackground(): TerminalColor =
-        TerminalColor.BLACK
+    override fun getDefaultStyle(): TextStyle {
+        // Встановлюємо білий текст на чорному фоні
+        return TextStyle(
+            TerminalColor.WHITE, // Колір тексту (Foreground)
+            TerminalColor.BLACK  // Колір фону (Background)
+        )
+    }
 
-    override fun getDefaultForeground(): TerminalColor =
-        TerminalColor.WHITE
+//    override fun getDefaultBackground(): TerminalColor =
+//        TerminalColor.BLACK
+//
+//    override fun getDefaultForeground(): TerminalColor =
+//        TerminalColor.WHITE
 }
 
 

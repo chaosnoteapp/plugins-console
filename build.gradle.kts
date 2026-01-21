@@ -33,11 +33,11 @@ dependencies {
     implementation(compose.components.uiToolingPreview)
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
-    implementation("org.slf4j:slf4j-simple:2.0.9")
+    implementation("org.slf4j:slf4j-simple:2.0.17")
 
 
-    implementation("org.jetbrains.jediterm:jediterm-ui:3.59")
-//    implementation("org.jetbrains.jediterm:jediterm-core:3.59")
+    implementation("org.jetbrains.jediterm:jediterm-ui:3.9")
+    implementation("org.jetbrains.jediterm:jediterm-core:3.9")
     implementation("org.jetbrains.jediterm:jediterm-pty:2.69")
 //    implementation("org.jetbrains.jediterm:jediterm-core-pty:3.0")
     implementation("org.jetbrains.pty4j:pty4j:0.13.11")
