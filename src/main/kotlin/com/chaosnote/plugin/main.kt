@@ -1,9 +1,6 @@
 package com.chaosnote.plugin
 
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.awt.SwingPanel
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import com.chaosnote.api.block.BlockHandle
@@ -36,4 +33,16 @@ class FakeBlockHandle(override val payload: String) : BlockHandle {
     override fun update(value: String) {
         println("Updated payload: $value")
     }
+
+    var globalState: Object? = null
+
+    override fun saveState(state: Object) {
+        globalState = state
+    }
+
+    override fun getState(): Object? {
+        return globalState
+    }
+
+
 }

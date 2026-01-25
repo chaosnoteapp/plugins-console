@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.chaosnoteapp:chaosnote-api:v0.1.0")
+    implementation("com.github.chaosnoteapp:chaosnote-api:0.0.1")
     implementation(compose.desktop.currentOs)
     implementation(compose.runtime)
     implementation(compose.foundation)
@@ -39,8 +39,8 @@ dependencies {
     implementation("org.jetbrains.jediterm:jediterm-ui:3.9")
     implementation("org.jetbrains.jediterm:jediterm-core:3.9")
     implementation("org.jetbrains.jediterm:jediterm-pty:2.69")
-//    implementation("org.jetbrains.jediterm:jediterm-core-pty:3.0")
     implementation("org.jetbrains.pty4j:pty4j:0.13.11")
+//    implementation("org.jetbrains.jediterm:jediterm-core-pty:3.0")
 
     testImplementation(kotlin("test"))
 }
@@ -68,7 +68,8 @@ val copyPluginJar by tasks.registering(Copy::class) {
     // 1. Тепер ми залежимо від shadowJar, бо саме він містить ваші 5 бібліотек
     dependsOn("shadowJar")
 
-    val pluginOutputDir = file("C:\\Users\\Anastasiia\\workspaces\\chaosnote\\chaosnote-desktop\\composeApp\\plugins")
+//    val pluginOutputDir = file("C:\\Users\\Anastasiia\\workspaces\\chaosnote\\chaosnote-desktop\\composeApp\\plugins")
+    val pluginOutputDir = file("C:\\Users\\Anastasiia\\AppData\\Roaming\\Chaosnote\\plugins")
 
     // 2. Беремо файл саме з таска shadowJar
     from(tasks.named("shadowJar"))

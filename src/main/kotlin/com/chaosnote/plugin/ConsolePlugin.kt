@@ -197,7 +197,8 @@ class ConsolePlugin : BlockPlugin {
             Spacer(Modifier.height(12.dp))
 
             TerminalView(
-                terminalType = payload.shell, // або "powershell.exe"
+                terminalType = payload.shell,
+                blockHandle = blockHandle,// або "powershell.exe"
                 controller = terminalController,
                 modifier = Modifier.fillMaxSize()
             )
