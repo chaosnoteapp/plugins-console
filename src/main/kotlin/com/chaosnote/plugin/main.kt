@@ -22,12 +22,6 @@ fun main() = application {
     }
 }
 
-//fun main() {
-//   Terminal()
-//}
-
-
-
 class FakeBlockHandle(override val payload: String) : BlockHandle {
     override val id: String = "plugin_management"
     override fun update(value: String) {

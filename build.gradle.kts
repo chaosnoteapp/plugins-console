@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.composeHotReload)
 
     id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.google.devtools.ksp") version "2.3.5"
 }
 
 group = "com.chaosnote"
@@ -41,6 +42,9 @@ dependencies {
     implementation("org.jetbrains.jediterm:jediterm-pty:2.69")
     implementation("org.jetbrains.pty4j:pty4j:0.13.11")
 //    implementation("org.jetbrains.jediterm:jediterm-core-pty:3.0")
+
+    implementation("com.google.auto.service:auto-service-annotations:1.1.1")
+    ksp("dev.zacsweers.autoservice:auto-service-ksp:1.2.0")
 
     testImplementation(kotlin("test"))
 }

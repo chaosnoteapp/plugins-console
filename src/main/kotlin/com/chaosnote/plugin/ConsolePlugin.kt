@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.chaosnote.api.block.BlockHandle
 import com.chaosnote.api.block.BlockPlugin
+import com.google.auto.service.AutoService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,6 +33,7 @@ import kotlinx.serialization.json.Json
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 
+@AutoService(BlockPlugin::class)
 class ConsolePlugin : BlockPlugin {
 
     override val type: String = this.javaClass.name
